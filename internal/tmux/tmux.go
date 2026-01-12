@@ -27,9 +27,15 @@ type Tmux struct {
 	bin string // binary name: "tmux" or "ccmux-compat"
 }
 
-// NewTmux creates a new Tmux wrapper with the default "tmux" binary.
+// NewTmux creates a new Tmux wrapper.
+// Uses GASTOWN_MULTIPLEXER_BIN env var if set, otherwise defaults to "tmux".
+// Set GASTOWN_MULTIPLEXER_BIN=ccmux-compat to use ccmux.
 func NewTmux() *Tmux {
-	return &Tmux{bin: "tmux"}
+	bin := os.Getenv("GASTOWN_MULTIPLEXER_BIN")
+	if bin == "" {
+		bin = "tmux"
+	}
+	return &Tmux{bin: bin}
 }
 
 // NewTmuxWithBin creates a new Tmux wrapper with a custom binary.
