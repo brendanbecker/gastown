@@ -23,16 +23,27 @@ var (
 )
 
 // Tmux wraps tmux operations.
-type Tmux struct{}
+type Tmux struct {
+	bin string // binary name: "tmux" or "ccmux-compat"
+}
 
-// NewTmux creates a new Tmux wrapper.
+// NewTmux creates a new Tmux wrapper with the default "tmux" binary.
 func NewTmux() *Tmux {
-	return &Tmux{}
+	return &Tmux{bin: "tmux"}
+}
+
+// NewTmuxWithBin creates a new Tmux wrapper with a custom binary.
+// Use "ccmux-compat" for ccmux compatibility mode.
+func NewTmuxWithBin(bin string) *Tmux {
+	if bin == "" {
+		bin = "tmux"
+	}
+	return &Tmux{bin: bin}
 }
 
 // run executes a tmux command and returns stdout.
 func (t *Tmux) run(args ...string) (string, error) {
-	cmd := exec.Command("tmux", args...)
+	cmd := exec.Command(t.bin, args...)
 	var stdout, stderr bytes.Buffer
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
@@ -143,9 +154,9 @@ func (t *Tmux) KillServer() error {
 	return err
 }
 
-// IsAvailable checks if tmux is installed and can be invoked.
+// IsAvailable checks if the multiplexer binary is installed and can be invoked.
 func (t *Tmux) IsAvailable() bool {
-	cmd := exec.Command("tmux", "-V")
+	cmd := exec.Command(t.bin, "-V")
 	return cmd.Run() == nil
 }
 

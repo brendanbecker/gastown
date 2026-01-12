@@ -49,6 +49,10 @@ type TownSettings struct {
 	// Values override or extend the built-in presets.
 	// Example: {"gemini": {"command": "/custom/path/to/gemini"}}
 	Agents map[string]*RuntimeConfig `json:"agents,omitempty"`
+
+	// MultiplexerBin is the terminal multiplexer binary to use.
+	// Default: "tmux". Alternative: "ccmux-compat" for ccmux compatibility mode.
+	MultiplexerBin string `json:"multiplexer_bin,omitempty"`
 }
 
 // NewTownSettings creates a new TownSettings with defaults.
